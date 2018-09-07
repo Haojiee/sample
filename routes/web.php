@@ -11,6 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'IndexController@home')->name('home');
+Route::get('/about', 'IndexController@about')->name('about');
+Route::get('/help', 'IndexController@help')->name('help');
+
+Route::get('signup', 'UsersController@create')->name("signup");
+Route::get('login', 'UsersController@login')->name('login');
