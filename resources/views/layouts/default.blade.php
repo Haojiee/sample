@@ -5,8 +5,9 @@
     <link rel="stylesheet" href="/css/app.css">
   </head>
   <body>
-    @include('layouts/_header')
+    @include('layouts._header')
+    @include('shared._message')
     @yield('content')
-    @include('layouts/_footer')
+    @include('layouts._footer')
   </body>
 </html>
