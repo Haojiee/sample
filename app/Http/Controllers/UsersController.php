@@ -17,11 +17,6 @@ class UsersController extends Controller
         return view('users.create');
     }
 
-    #用户登录
-    public function login() {
-        return view('users.login');
-    }
-
     #用户注册
     public function store(Request $request) {
         //字段验证
