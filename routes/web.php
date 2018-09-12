@@ -16,7 +16,7 @@ Route::get('/about', 'IndexController@about')->name('about');
 Route::get('/help', 'IndexController@help')->name('help');
 
 Route::get('signup', 'UsersController@create')->name("signup");
-Route::get('login', 'UsersController@login')->name('login');
+Route::get('signup/confirm/{token}', 'UsersController@confirmEmail')->name('confirm_email');
 
 Route::resource('users', 'UsersController');
 

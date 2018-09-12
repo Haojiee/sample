@@ -29,8 +29,13 @@ class LoginController extends Controller
         ]);
         
         if (Auth::attempt($credentials, $request->has('remember'))) {
-            session()->flash('success', '欢迎回来！');
-            return redirect()->intended(route('users.show', [Auth::user()]));
+            if ($request->activated) {
+                session()->flash('success', '欢迎回来！');
+                return redirect()->intended(route('users.show', [Auth::user()]));
+            }else {
+                session()->flash('info', '请前往邮箱查看邮件激活账号');
+                return redirect()->route('home');
+            }
         }else {
             session()->flash('danger', '很抱歉，您的邮箱和密码不匹配');
             return redirect()->back()->withInput();

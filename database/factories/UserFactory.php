@@ -25,5 +25,7 @@ $factory->define(\App\Models\User::class, function (Faker $faker) {
         'remember_token' => str_random(10),
         'created_at' => $data_time,
         'updated_at' => $data_time,
+        'activated' => false,
+        'activation_token' => str_random(30),
     ];
 });

@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Auth;
+use Mail;
 
 class UsersController extends Controller
 {
     public function __construct() {
         #登录以外用户能访问的操作
         $this->middleware('auth', [
-            'except' => ['create', 'store', 'index']
+            'except' => ['show', 'create', 'store', 'index', 'confirmEmail']
         ]);
         
         #未登录才能访问的操作
@@ -28,8 +29,6 @@ class UsersController extends Controller
 
     #用户信息
     public function show(User $user) {
-        //用户授权--只有本用户才有访问改方法的权限
-        $this->authorize('update', $user);
         return view('users.show', compact('user'));
     }
 
@@ -54,10 +53,10 @@ class UsersController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        Auth::login($user);
-        //注册成功，跳转后提示信息
-        session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
-        return redirect()->route('users.show', [$user]);
+        // Auth::login($user);
+        $this->sendEmailConfirmationTo($user);
+        session()->flash('success', '邮件以发送至您的邮箱，请查收~~');
+        return redirect('/');
     }
 
     #编辑资料
@@ -92,4 +91,28 @@ class UsersController extends Controller
         session()->flash('success', '用户删除成功！');
         return redirect()->route('users.index');
     }
+
+    #确认邮箱跳转用户信息页面
+    public function confirmEmail($token) {
+        $user = User::where('activation_token', $token)->firstOrfail();
+        $user->actvated = true;
+        $user->activation_token = null;
+        Auth::login($user);
+        session()->flash('success', '激活成功！欢迎加入Sample App~~');
+        return redirect()->route('users.show', compact('user'));
+    }
+
+    #发送邮件
+    private function sendEmailConfirmationTo($user) {
+        $view = 'emails.confirm';
+        $data = compact('user');
+        $from = '1208491124@qq.com';
+        $name = 'Mr.li';
+        $to = $user->email;
+        $subject = '感谢您在 Sample 网站进行注册！';
+        Mail::send($view, $data, function ($message) use ($from, $name, $to, $subject) {
+            $message->from($from, $name)->to($to)->subject($subject);
+        });
+    }
+
 }
