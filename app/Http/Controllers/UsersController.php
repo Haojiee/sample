@@ -29,7 +29,8 @@ class UsersController extends Controller
 
     #用户信息
     public function show(User $user) {
-        return view('users.show', compact('user'));
+        $statuses = $user->statuses()->orderBy('created_at', 'desc')->paginate(30);
+        return view('users.show', compact('user', 'statuses'));
     }
 
     #用户注册
@@ -52,8 +53,6 @@ class UsersController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-
-        // Auth::login($user);
         $this->sendEmailConfirmationTo($user);
         session()->flash('success', '邮件以发送至您的邮箱，请查收~~');
         return redirect('/');
